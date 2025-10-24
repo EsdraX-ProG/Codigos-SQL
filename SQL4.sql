@@ -72,9 +72,71 @@ INSERT INTO CONSULTAS (id_consulta, id_medico, id_paciente, data_consulta, valor
 
 
 -- 1. Crie um query para retorna apenas o Nome do paciente, nome do médico e data da consulta
+
+SELECT 
+    p.nome AS Nome_Paciente,
+    m.nome AS Nome_Medico,
+    c.data_consulta AS Data_Consulta
+FROM 
+    CONSULTAS c
+JOIN 
+    PACIENTES p ON c.id_paciente = p.id_paciente
+JOIN 
+    MEDICOS m ON c.id_medico = m.id_medico;
+
 -- 2. *Crie uma query para retorna apenas Pacientes de São Paulo com cardiologistas*
+
+SELECT 
+    p.nome AS Nome_Paciente,
+    p.cidade AS Cidade,
+    m.nome AS Nome_Medico,
+    m.especialidade AS Especialidade,
+    c.data_consulta AS Data_Consulta
+FROM 
+    CONSULTAS c
+JOIN 
+    PACIENTES p ON c.id_paciente = p.id_paciente
+JOIN 
+    MEDICOS m ON c.id_medico = m.id_medico
+WHERE 
+    p.cidade = 'São Paulo'
+    AND m.especialidade = 'Cardiologia';
 
 -- ### Desafio
 
 -- 1. *Qual foi a consulta mais cara realizada? (*Mostrar paciente, médico, especialidade e valor)
+
+SELECT 
+    p.nome AS Nome_Paciente,
+    m.nome AS Nome_Medico,
+    m.especialidade AS Especialidade,
+    c.valor AS Valor
+FROM 
+    CONSULTAS c
+JOIN 
+    PACIENTES p ON c.id_paciente = p.id_paciente
+JOIN 
+    MEDICOS m ON c.id_medico = m.id_medico
+WHERE 
+    c.valor = (SELECT MAX(valor) FROM CONSULTAS);
+
 -- 2. Consultas do último mês com todos os detalhe
+SELECT 
+    c.id_consulta AS ID_Consulta,
+    p.nome AS Nome_Paciente,
+    p.cidade AS Cidade,
+    m.nome AS Nome_Medico,
+    m.especialidade AS Especialidade,
+    m.crm AS CRM,
+    c.data_consulta AS Data_Consulta,
+    c.valor AS Valor
+FROM 
+    CONSULTAS c
+JOIN 
+    PACIENTES p ON c.id_paciente = p.id_paciente
+JOIN 
+    MEDICOS m ON c.id_medico = m.id_medico
+WHERE 
+    c.data_consulta >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+ORDER BY 
+    c.data_consulta DESC;
